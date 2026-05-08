@@ -27,7 +27,28 @@ A powerful, browser-based media conversion and processing tool powered by FFmpeg
 
 ## 🛠️ Usage
 
-### Prerequisites
+### Desktop Application (Electron)
+
+You can package and run this tool as a standalone desktop application (no local server needed). This turns it into an `.exe`, `.dmg`, or `AppImage` file for your platform.
+
+1. Ensure dependencies are installed:
+```bash
+npm install
+```
+
+2. Run in development mode (spawns the app window):
+```bash
+npm run electron:dev
+```
+
+3. **Build the standalone installer for your current OS:**
+```bash
+npm run electron:dist
+```
+The compiled program (installer and portable executable) will be placed in the `release/` folder.
+
+### Web Browser Usage
+
 Make sure your development server serves up the correct Cross-Origin header requirements for WebAssembly SharedArrayBuffer to work:
 - `Cross-Origin-Opener-Policy: same-origin`
 - `Cross-Origin-Embedder-Policy: require-corp`
