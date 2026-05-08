@@ -1,0 +1,6 @@
+{
+  "name": "Web FFmpeg Studio",
+  "description": "Полноценный интрумент для конвертации видео, редактирования метаданных и создания GIF прямо в браузере с помощью FFmpeg.wasm.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
