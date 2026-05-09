@@ -14,6 +14,28 @@ import { Textarea } from './components/ui/textarea';
 
 type Mode = 'convert' | 'gif' | 'metadata' | 'custom';
 
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.log(error);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [key, storedValue]);
+
+  return [storedValue, setStoredValue] as const;
+}
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const [loaded, setLoaded] = useState(false);
@@ -25,45 +47,45 @@ export default function App() {
   const logRef = useRef<HTMLTextAreaElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
-  const [mode, setMode] = useState<Mode>('convert');
+  const [mode, setMode] = useLocalStorage<Mode>('app_mode', 'convert');
   const [logs, setLogs] = useState<string>('');
 
   // Conversion state
-  const [outputFormat, setOutputFormat] = useState('mp4');
-  const [videoCodec, setVideoCodec] = useState('copy');
-  const [audioCodec, setAudioCodec] = useState('copy');
-  const [videoPreset, setVideoPreset] = useState('none');
-  const [videoBitrate, setVideoBitrate] = useState('');
-  const [videoCrf, setVideoCrf] = useState('');
-  const [videoResolution, setVideoResolution] = useState('original');
-  const [customResX, setCustomResX] = useState('');
-  const [customResY, setCustomResY] = useState('');
-  const [videoCrop, setVideoCrop] = useState('none');
-  const [customCropW, setCustomCropW] = useState('');
-  const [customCropH, setCustomCropH] = useState('');
-  const [customCropX, setCustomCropX] = useState('0');
-  const [customCropY, setCustomCropY] = useState('0');
-  const [videoStabilization, setVideoStabilization] = useState('none');
-  const [convertTrimStart, setConvertTrimStart] = useState('');
-  const [convertTrimEnd, setConvertTrimEnd] = useState('');
-  const [additionalFlags, setAdditionalFlags] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [outputFormat, setOutputFormat] = useLocalStorage('app_outputFormat', 'mp4');
+  const [videoCodec, setVideoCodec] = useLocalStorage('app_videoCodec', 'copy');
+  const [audioCodec, setAudioCodec] = useLocalStorage('app_audioCodec', 'copy');
+  const [videoPreset, setVideoPreset] = useLocalStorage('app_videoPreset', 'none');
+  const [videoBitrate, setVideoBitrate] = useLocalStorage('app_videoBitrate', '');
+  const [videoCrf, setVideoCrf] = useLocalStorage('app_videoCrf', '');
+  const [videoResolution, setVideoResolution] = useLocalStorage('app_videoResolution', 'original');
+  const [customResX, setCustomResX] = useLocalStorage('app_customResX', '');
+  const [customResY, setCustomResY] = useLocalStorage('app_customResY', '');
+  const [videoCrop, setVideoCrop] = useLocalStorage('app_videoCrop', 'none');
+  const [customCropW, setCustomCropW] = useLocalStorage('app_customCropW', '');
+  const [customCropH, setCustomCropH] = useLocalStorage('app_customCropH', '');
+  const [customCropX, setCustomCropX] = useLocalStorage('app_customCropX', '0');
+  const [customCropY, setCustomCropY] = useLocalStorage('app_customCropY', '0');
+  const [videoStabilization, setVideoStabilization] = useLocalStorage('app_videoStabilization', 'none');
+  const [convertTrimStart, setConvertTrimStart] = useLocalStorage('app_convertTrimStart', '');
+  const [convertTrimEnd, setConvertTrimEnd] = useLocalStorage('app_convertTrimEnd', '');
+  const [additionalFlags, setAdditionalFlags] = useLocalStorage('app_additionalFlags', '');
+  const [showAdvanced, setShowAdvanced] = useLocalStorage('app_showAdvanced', false);
   
   // GIF state
-  const [gifStart, setGifStart] = useState('00:00:00');
-  const [gifDuration, setGifDuration] = useState('5');
-  const [gifFps, setGifFps] = useState('10');
-  const [gifScale, setGifScale] = useState('320');
-  const [gifDither, setGifDither] = useState('sierra2_4a');
-  const [gifColors, setGifColors] = useState('256');
-  const [gifStatsMode, setGifStatsMode] = useState('full');
+  const [gifStart, setGifStart] = useLocalStorage('app_gifStart', '00:00:00');
+  const [gifDuration, setGifDuration] = useLocalStorage('app_gifDuration', '5');
+  const [gifFps, setGifFps] = useLocalStorage('app_gifFps', '10');
+  const [gifScale, setGifScale] = useLocalStorage('app_gifScale', '320');
+  const [gifDither, setGifDither] = useLocalStorage('app_gifDither', 'sierra2_4a');
+  const [gifColors, setGifColors] = useLocalStorage('app_gifColors', '256');
+  const [gifStatsMode, setGifStatsMode] = useLocalStorage('app_gifStatsMode', 'full');
   
   // Metadata state
   const [metaTitle, setMetaTitle] = useState('');
   const [metaArtist, setMetaArtist] = useState('');
 
   // Custom state
-  const [customArgs, setCustomArgs] = useState('-i input.mp4 output.mp4');
+  const [customArgs, setCustomArgs] = useLocalStorage('app_customArgs', '-i input.mp4 output.mp4');
 
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultName, setResultName] = useState<string>('');
@@ -280,7 +302,7 @@ export default function App() {
               <p className="text-slate-400 text-sm">{t('appDesc')}</p>
             </div>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
             <Select value={i18n.language} onValueChange={(v) => i18n.changeLanguage(v)}>
               <SelectTrigger className="w-[120px] bg-black/20 border-white/5">
                 <SelectValue />

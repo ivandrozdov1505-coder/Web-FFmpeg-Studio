@@ -2,6 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from 'url';
+import { exec } from "child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,17 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Build trigger route
+  app.get("/api/build", (req, res) => {
+    exec("npm run build", (error, stdout, stderr) => {
+      if (error) {
+        res.status(500).send(`Build failed: ${error.message}`);
+        return;
+      }
+      res.download(path.join(process.cwd(), 'dist', 'index.html'), 'WebFFmpegStudio.html');
+    });
+  });
 
   // Added headers for SharedArrayBuffer support required by FFmpeg.wasm
   app.use((req, res, next) => {

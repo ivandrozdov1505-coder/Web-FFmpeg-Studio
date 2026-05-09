@@ -65,12 +65,14 @@ npm install
 npm run dev
 ```
 
-### Production Build
+### Production Build (Single HTML File)
 
 ```bash
 npm run build
 ```
-This generates the optimized static assets in the `dist` folder.
+Thanks to `vite-plugin-singlefile`, this generates a **single, standalone `index.html` file** in the `dist` folder. All scripts and styles are embedded inside. You can simply double-click `dist/index.html` on your desktop to run the application entirely offline without needing a web server or Node.js!
+
+*(Note: In the compiled single-file mode, the source code and build tools are completely removed, and the file cannot be recompiled or modified back into a development project.)*
 
 ## 🌍 Localization
 
